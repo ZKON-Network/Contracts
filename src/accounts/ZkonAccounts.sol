@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.17;
 
 import "./IZkonAccounts.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "openzeppelin/access/AccessControl.sol";
 import "../utils/TransferHelper.sol";
 
 contract ZkonAccounts is IZkonAccounts, AccessControl {
@@ -18,6 +18,8 @@ contract ZkonAccounts is IZkonAccounts, AccessControl {
 
     address public zkonToken;
 
+    address public treasury;
+
     uint256 public signPrice;
 
     // Client -> Signature Hashes
@@ -25,14 +27,19 @@ contract ZkonAccounts is IZkonAccounts, AccessControl {
 
     event ProofsSubmited(address indexed client, uint256 amount);
 
-    constructor(address _zkonToken, uint256 _signPrice) {
+    constructor(address _zkonToken, uint256 _signPrice, address _treasury) {
         zkonToken = _zkonToken;
         signPrice = _signPrice;
+        treasury = _treasury;
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     function setSignPrice(uint256 price) external onlyRole(DEFAULT_ADMIN_ROLE) {
         signPrice = price;
+    }
+
+    function setTreasury(address _treasury) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        treasury = _treasury;
     }
 
     function registerClient(address clientAddress) external override onlyRole(DEFAULT_ADMIN_ROLE) returns (bool) {
@@ -62,6 +69,7 @@ contract ZkonAccounts is IZkonAccounts, AccessControl {
         for (uint256 i = 0; i < proofs.length; i++) {
             signs[client].push(proofs[i]);
         }
+        TransferHelper.safeTransfer(zkonToken, treasury, proofs.length * signPrice);
         emit ProofsSubmited(client, proofs.length);
         return true;
     }
