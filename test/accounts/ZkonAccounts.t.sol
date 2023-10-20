@@ -45,4 +45,42 @@ contract ZkonAccountsTest is Test {
         assertEq(zkon.balanceOf(address(1)), 1000 ether - 400 ether);
     }
 
+    function testShardStorage() public {
+        uint256 user = 42;
+
+        uint256 num = 27;
+        bytes memory shards = abi.encodePacked(num);
+
+        vm.prank(address(1));
+        vm.expectRevert("Invalid auth");
+        accounts.pause(client);
+
+
+        vm.prank(address(1));
+        vm.expectRevert("Not enough balance");
+        accounts.storeShards(client, user, shards);
+
+        vm.prank(address(1));
+        accounts.depositTokens(client, 200 ether);
+        vm.prank(address(1));
+        vm.expectRevert("Invalid auth");
+        accounts.storeShards(client, user, shards);
+
+        accounts.grantRole(DEFAULT_ADMIN_ROLE, address(1));
+        vm.prank(address(1));
+        accounts.storeShards(client, user, shards);
+
+        assertEq(accounts.getShards(client, user), shards);
+
+        vm.prank(address(1));
+        accounts.pause(client);
+
+        vm.expectRevert("Client disabled");
+        accounts.getShards(client, user);
+
+        accounts.registerClient(client);
+        assertEq(accounts.getShards(client, user), shards);
+    }
+
+
 }
