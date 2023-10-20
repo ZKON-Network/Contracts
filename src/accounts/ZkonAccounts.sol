@@ -69,13 +69,17 @@ contract ZkonAccounts is IZkonAccounts, AccessControl {
         clients[client] = false;
     }
 
-    function verifyProofs(address client, bytes[] calldata proofs) external override returns (bool) {
+    function verifyProofs(address client, bytes[] calldata proofs) external override onlyRole(DEFAULT_ADMIN_ROLE) returns (bool) {
         for (uint256 i = 0; i < proofs.length; i++) {
             signs[client].push(proofs[i]);
         }
         TransferHelper.safeTransfer(zkonToken, treasury, proofs.length * signPrice);
         emit ProofsSubmited(client, proofs.length);
         return true;
+    }
+
+    function totalProofs(address client) public view returns (uint256) {
+        return signs[client].length;
     }
 
     function getProofs(address client, uint256 limit, uint256 offset) public view returns (bytes[] memory) {
