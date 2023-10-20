@@ -60,6 +60,10 @@ contract ZkonAccounts is IZkonAccounts, AccessControl {
         return true;
     }
 
+    function getTokens(address client) external view override returns (uint256) {
+        return amounts[client];
+    }
+
     function pause(address client) external override {
         require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || msg.sender == client, "Invalid auth");
         clients[client] = false;

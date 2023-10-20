@@ -9,6 +9,8 @@ interface IZkonAccounts {
 
     function withdrawTokens(address client, uint256 amount) external returns (bool);
 
+    function getTokens(address client) external returns (uint256);
+
     function pause(address client) external;
 
     function verifyProofs(address client, bytes[] calldata proofs) external returns (bool);
