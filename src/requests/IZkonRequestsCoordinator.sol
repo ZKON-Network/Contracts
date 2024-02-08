@@ -19,6 +19,8 @@ interface IZkonRequestsCoordinator {
     /**
     * @notice Checks if the request is valid
     * @param requestId The request ID
+    * @param proof The ZK proof
+    * @param signature The signature used as a public arg on the zk circuit
     */
-    function recordRequestFulfillment(bytes32 requestId) external;
+    function recordRequestFulfillment(bytes32 requestId, bytes memory proof, uint256 signature) external;
 }

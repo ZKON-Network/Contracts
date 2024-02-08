@@ -43,8 +43,8 @@ abstract contract ZkonRequests {
     /**
     * @notice Validates the request
     */
-    modifier recordRequestFulfillment(bytes32 _requestId) {
-        coordinator.recordRequestFulfillment(_requestId);
+    modifier recordRequestFulfillment(bytes32 _requestId, bytes memory proof, uint256 signature) {
+        coordinator.recordRequestFulfillment(_requestId, proof, signature);
         _;
     }
 }

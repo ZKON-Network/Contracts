@@ -58,8 +58,10 @@ contract RequestExample is ZkonRequests {
      */
     function fulfill(
         bytes32 _requestId,
+        bytes memory proof,
+        uint256 signature,
         uint256 _volume
-    ) public recordRequestFulfillment(_requestId) {
+    ) public recordRequestFulfillment(_requestId, proof, signature) {
         volume = _volume;
         emit RequestVolume(_requestId, _volume);
     }
