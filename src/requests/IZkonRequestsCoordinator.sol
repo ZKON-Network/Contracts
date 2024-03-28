@@ -5,7 +5,7 @@ import {Zkon} from "../Zkon.sol";
 
 interface IZkonRequestsCoordinator {
 
-    event Requested(bytes32 indexed id);
+    event Requested(bytes32 indexed id, bytes req);
     event Fulfilled(bytes32 indexed id);
     event Cancelled(bytes32 indexed id);
 

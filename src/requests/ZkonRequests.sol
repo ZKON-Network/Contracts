@@ -3,6 +3,7 @@ pragma solidity ^0.8.17;
 
 import {Zkon} from "../Zkon.sol";
 import {IZkonRequestsCoordinator} from "./IZkonRequestsCoordinator.sol";
+import "../utils/TransferHelper.sol";
 
 abstract contract ZkonRequests {
     
@@ -11,8 +12,9 @@ abstract contract ZkonRequests {
     mapping(bytes32 => address) private s_pendingRequests;
     IZkonRequestsCoordinator private coordinator;
 
-    constructor(IZkonRequestsCoordinator _coordinator) {
+    constructor(IZkonRequestsCoordinator _coordinator, address _zkon) {
         coordinator = _coordinator;
+        TransferHelper.safeApprove(_zkon, address(_coordinator), type(uint256).max);
     }
 
     /**
@@ -43,8 +45,10 @@ abstract contract ZkonRequests {
     /**
     * @notice Validates the request
     */
-    modifier recordRequestFulfillment(bytes32 _requestId, bytes memory proof, uint256 signature) {
-        coordinator.recordRequestFulfillment(_requestId, proof, signature);
+    modifier recordRequestFulfillment(
+        bytes32 _requestId, uint[2] memory a, uint[2] memory b1, uint[2] memory b2, uint[2] memory c, uint256 signature
+    ) {
+        coordinator.recordRequestFulfillment(_requestId, abi.encode(a, b1, b2, c), signature);
         _;
     }
 }
